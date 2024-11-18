@@ -7,11 +7,16 @@
 
 import { ReactNode }      from 'react';
 import { NextUIProvider } from '@nextui-org/react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 function Providers({ children }: { children: ReactNode }) {
 	return <NextUIProvider>
 		{children}
+		<ToastContainer
+				position="bottom-right" pauseOnHover={true} className="isolate z-50"
+				hideProgressBar={true} />
 	</NextUIProvider>;
 }
 

@@ -22,7 +22,7 @@ function RegisterForm() {
 					handleSubmit,
 					formState: { errors, isSubmitting, isValid }
 				} = useForm<RegisterSchema>({
-		mode            : 'onBlur',
+		mode            : 'onTouched',
 		shouldFocusError: true,
 		resolver        : zodResolver(registerSchema),
 	});
@@ -33,6 +33,7 @@ function RegisterForm() {
 		
 		if (result.success) {
 			console.log('User registered successfully');
+			console.log(result.data);
 		}
 		else {
 			if (Array.isArray(result.errors)) {

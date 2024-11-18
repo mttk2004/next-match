@@ -5,15 +5,18 @@
  *  "Family is where life begins and love never ends."
  */
 
-'use client';
 
 import { Button, Navbar, NavbarBrand, NavbarContent } from '@nextui-org/react';
 import { GiMatchTip }                                 from 'react-icons/gi';
-import { NavLink }                                    from '@/components/index';
+import { NavLink }                                    from '@/components';
 import Link                                           from 'next/link';
+import { auth }                                       from '@/auth';
+import UserMenu                                       from '@/components/navbar/UserMenu';
 
 
-function NavigationBar() {
+async function NavigationBar() {
+	const session = await auth();
+	
 	return <Navbar
 			className="text-black bg-gradient-to-r from-amber-300 to-amber-400"
 			classNames={{
@@ -26,7 +29,7 @@ function NavigationBar() {
 				]
 			}}>
 		<NavbarBrand>
-			<Link href='/' className="flex gap-2 items-center cursor-pointer">
+			<Link href="/" className="flex gap-2 items-center cursor-pointer">
 				<GiMatchTip size={24} />
 				<span className="font-bold cursor-pointer text-large">NextMatch</span>
 			</Link>
@@ -39,12 +42,18 @@ function NavigationBar() {
 		</NavbarContent>
 		
 		<NavbarContent justify="end">
-			<Button as={Link} href="/register" color="primary" className="font-semibold px-6" radius="none">Sign
-																																																	 Up</Button>
-			<Button
-					as={Link} href="/login" color="secondary" variant="ghost"
-					className="font-semibold px-6" radius="none">Sign
-																											 In</Button>
+			{session ? <UserMenu user={session.user} /> :
+			 <>
+				 <Button
+						 as={Link} href="/register" color="primary" className="font-semibold px-6"
+						 radius="none">Sign
+													 Up</Button>
+				 <Button
+						 as={Link} href="/login" color="secondary" variant="ghost"
+						 className="font-semibold px-6" radius="none">Sign
+																													In</Button>
+			 </>
+			}
 		</NavbarContent>
 	</Navbar>;
 }

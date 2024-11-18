@@ -9,22 +9,35 @@
 
 import { Button, Card, CardBody, CardHeader, Input } from '@nextui-org/react';
 import { GiPadlock }                                 from 'react-icons/gi';
-import { useForm }                  from 'react-hook-form';
-import { loginSchema, LoginSchema } from '@/lib/schemas';
-import { zodResolver }              from '@hookform/resolvers/zod';
+import { useForm }                                   from 'react-hook-form';
+import { loginSchema, LoginSchema }                  from '@/lib/schemas';
+import { zodResolver }                               from '@hookform/resolvers/zod';
+import { useRouter }                                 from 'next/navigation';
+import { signInUSer }                                from '@/app/actions';
+import { toast }                                     from 'react-toastify';
 
 
 function LoginForm() {
-	const { register, handleSubmit, formState: { errors } } = useForm<LoginSchema>({
-		mode: 'onBlur',
+	const router = useRouter();
+	const {
+					register,
+					handleSubmit,
+					formState: { errors, isValid, isSubmitting }
+				} = useForm<LoginSchema>({
+		mode            : 'onChange',
 		shouldFocusError: true,
-		resolver: zodResolver(loginSchema),
+		resolver        : zodResolver(loginSchema),
 	});
 	
-	function onSubmit(data: LoginSchema) {
-		console.log('data' + data);
-		console.log(data.password);
-		console.log(data.email);
+	async function onSubmit(data: LoginSchema) {
+		const result = await signInUSer(data);
+		
+		if (result.success) {
+			router.push('/members');
+		}
+		else {
+			toast.error(result.errors as string);
+		}
 	}
 	
 	return <Card className="max-w-xl mx-auto px-6 py-5 space-y-8">
@@ -46,17 +59,22 @@ function LoginForm() {
 				<div className="space-y-6">
 					<Input
 							label="Email" variant="flat" placeholder="Enter your email"
-							defaultValue="" {...register('email')} radius='none'
+							defaultValue="" {...register('email')} radius="none"
 							isInvalid={!!errors.email} errorMessage={errors.email?.message as string}
 					/>
 					<Input
 							label="Password" variant="flat" placeholder="Enter your password"
-							type="password" defaultValue="" {...register('password')} radius='none'
+							type="password" defaultValue="" {...register('password')} radius="none"
 							isInvalid={!!errors.password} errorMessage={errors.password?.message as string}
 					/>
 				</div>
 				
-				<Button color="primary" radius='none' type="submit" className="w-full py-6">Login</Button>
+				<Button
+						color="primary" radius="none" type="submit" className="w-full py-6"
+						isLoading={isSubmitting} isDisabled={!isValid}
+				>
+					Login
+				</Button>
 			</form>
 		</CardBody>
 	</Card>;

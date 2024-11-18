@@ -6,6 +6,6 @@
  */
 
 
-export { default as Providers } from './Providers';
-export { default as NavigationBar } from './NavigationBar';
-export { default as NavLink } from './NavLink';
+export { default as Providers }     from './Providers';
+export { default as NavigationBar } from './navbar/NavigationBar';
+export { default as NavLink }       from './NavLink';

@@ -7,12 +7,36 @@
 
 'use server';
 
-import { registerSchema, RegisterSchema } from '@/lib/schemas';
-import { prisma }                         from '@/lib/prisma';
-import { ActionResult }                   from '@/types';
-import { User }                           from '@prisma/client';
-import bcrypt                             from 'bcryptjs';
+import { LoginSchema, registerSchema, RegisterSchema } from '@/lib/schemas';
+import { prisma }                                      from '@/lib/prisma';
+import { ActionResult }                                from '@/types';
+import { User }                                        from '@prisma/client';
+import { signIn }                                      from '@/auth';
+import { AuthError }                                   from 'next-auth';
+import bcrypt                                          from 'bcryptjs';
 
+
+export const signInUSer = async (data: LoginSchema): Promise<ActionResult<User>> => {
+	try {
+		const result = await signIn('credentials',
+				{ email: data.email, password: data.password, redirect: false });
+		
+		return { success: true, data: result };
+	}
+	catch (error) {
+		if (error instanceof AuthError) {
+			switch (error.type) {
+			case 'CredentialsSignin':
+				return { success: false, errors: 'Invalid credentials' };
+			default:
+				return { success: false, errors: 'Internal server error' };
+			}
+		}
+		else {
+			return { success: false, errors: 'Another internal server error' };
+		}
+	}
+};
 
 export const registerUser = async (data: RegisterSchema): Promise<ActionResult<User>> => {
 	try {
