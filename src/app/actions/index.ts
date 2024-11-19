@@ -7,3 +7,4 @@
 
 
 export * from './authActions';
+export * from './memberActions';

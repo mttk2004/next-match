@@ -11,7 +11,7 @@ import { LoginSchema, registerSchema, RegisterSchema } from '@/lib/schemas';
 import { prisma }                                      from '@/lib/prisma';
 import { ActionResult }                                from '@/types';
 import { User }                                        from '@prisma/client';
-import { signIn }                                      from '@/auth';
+import { signIn, signOut }                             from '@/auth';
 import { AuthError }                                   from 'next-auth';
 import bcrypt                                          from 'bcryptjs';
 
@@ -36,6 +36,10 @@ export const signInUSer = async (data: LoginSchema): Promise<ActionResult<User>>
 			return { success: false, errors: 'Another internal server error' };
 		}
 	}
+};
+
+export const signOutUser = async () => {
+	await signOut({ redirectTo: '/' });
 };
 
 export const registerUser = async (data: RegisterSchema): Promise<ActionResult<User>> => {
